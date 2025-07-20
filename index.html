@@ -235,15 +235,213 @@
             }
 
             collidesWith(crab) {
-                const crabHeight = crab.ducking ? 6 : crab.height;
-                const crabY = crab.ducking ? crab.y + 10 : crab.y;
+                // Get crab collision mask
+                const crabMask = this.getCrabCollisionMask(crab);
+                const obstacleMask = this.getObstacleCollisionMask();
                 
-                // Add some margin for forgiveness
-                const margin = 2;
-                return crab.x + margin < this.x + this.width - margin &&
-                       crab.x + crab.width - margin > this.x + margin &&
-                       crabY + margin < this.y + this.height - margin &&
-                       crabY + crabHeight - margin > this.y + margin;
+                // Check for pixel-perfect collision
+                return this.checkPixelCollision(crabMask, obstacleMask, crab);
+            }
+            
+            getCrabCollisionMask(crab) {
+                const mask = [];
+                const crabHeight = crab.ducking ? 8 : crab.height;
+                const crabY = crab.ducking ? crab.y + 8 : crab.y;
+                
+                if (crab.ducking) {
+                    // Ducking crab mask - only the body, not the pincers
+                    for (let y = 0; y < 6; y++) {
+                        mask[y] = [];
+                        for (let x = 0; x < 16; x++) {
+                            // Only the main body is solid (x: 4-19, y: 0-5)
+                            mask[y][x] = (x >= 4 && x < 20);
+                        }
+                    }
+                } else {
+                    // Normal crab mask - only the body, not the pincers or eyes
+                    for (let y = 0; y < crab.height; y++) {
+                        mask[y] = [];
+                        for (let x = 0; x < 24; x++) {
+                            // Main body is solid (x: 6-17, y: 2-11)
+                            let isSolid = (x >= 6 && x < 18 && y >= 2 && y < 12);
+                            
+                            // Shell pattern details are also solid
+                            if (y >= 4 && y < 6) {
+                                if ((x >= 8 && x < 10) || (x >= 14 && x < 16) || (x >= 11 && x < 13 && y === 6)) {
+                                    isSolid = true;
+                                }
+                            }
+                            
+                            mask[y][x] = isSolid;
+                        }
+                    }
+                }
+                
+                return {
+                    mask: mask,
+                    x: crab.x,
+                    y: crabY,
+                    width: 24,
+                    height: crabHeight
+                };
+            }
+            
+            getObstacleCollisionMask() {
+                const mask = [];
+                
+                if (this.type === 'sandcastle') {
+                    // Sandcastle mask - only the black parts are solid
+                    for (let y = 0; y < this.height; y++) {
+                        mask[y] = [];
+                        for (let x = 0; x < this.width; x++) {
+                            let isSolid = false;
+                            
+                            // Main castle body (black parts)
+                            if (y >= 20 && y < 28 && x >= 3 && x < 21) {
+                                isSolid = true;
+                            }
+                            if (y >= 18 && y < 20 && x >= 4 && x < 20) {
+                                isSolid = true;
+                            }
+                            if (y >= 16 && y < 18 && x >= 5 && x < 19) {
+                                isSolid = true;
+                            }
+                            
+                            // Center tower
+                            if (y >= 12 && y < 16 && x >= 8 && x < 16) {
+                                isSolid = true;
+                            }
+                            if (y >= 10 && y < 12 && x >= 9 && x < 15) {
+                                isSolid = true;
+                            }
+                            
+                            // Flag pole
+                            if (y >= 8 && y < 11 && x >= 11 && x < 12) {
+                                isSolid = true;
+                            }
+                            
+                            // Cut out white details (door, windows, crenellations)
+                            if (y >= 26 && y < 28 && x >= 10 && x < 14) { // Door
+                                isSolid = false;
+                            }
+                            if (y >= 22 && y < 24 && (x >= 6 && x < 8 || x >= 16 && x < 18)) { // Windows
+                                isSolid = false;
+                            }
+                            if (y >= 13 && y < 15 && x >= 10 && x < 12) { // Tower window
+                                isSolid = false;
+                            }
+                            if (y === 27 && (x >= 5 && x < 7 || x >= 9 && x < 11 || x >= 13 && x < 15 || x >= 17 && x < 19)) { // Crenellations
+                                isSolid = false;
+                            }
+                            if (y === 11 && (x >= 9 && x < 11 || x >= 13 && x < 15)) { // Tower crenellations
+                                isSolid = false;
+                            }
+                            
+                            mask[y][x] = isSolid;
+                        }
+                    }
+                } else if (this.type === 'seagull') {
+                    // Seagull mask - only the black outline and beak are solid
+                    const wingUp = Math.floor(this.animFrame / 8) % 2;
+                    
+                    for (let y = 0; y < this.height; y++) {
+                        mask[y] = [];
+                        for (let x = 0; x < this.width; x++) {
+                            let isSolid = false;
+                            
+                            // Body outline
+                            if (y === 8 && x >= 8 && x < 16) isSolid = true;
+                            if (y === 12 && x >= 8 && x < 16) isSolid = true;
+                            if (x === 8 && y >= 8 && y < 13) isSolid = true;
+                            if (x === 15 && y >= 8 && y < 13) isSolid = true;
+                            
+                            // Head outline
+                            if (y === 6 && x >= 14 && x < 18) isSolid = true;
+                            if (y === 9 && x >= 14 && x < 18) isSolid = true;
+                            if (x === 14 && y >= 6 && y < 10) isSolid = true;
+                            if (x === 17 && y >= 6 && y < 10) isSolid = true;
+                            
+                            // Beak
+                            if (y >= 7 && y < 9 && x >= 18 && x < 20) isSolid = true;
+                            
+                            // Wings outline
+                            if (wingUp) {
+                                // Wings up
+                                if (y === 4 && x >= 4 && x < 12) isSolid = true;
+                                if (y === 7 && x >= 4 && x < 12) isSolid = true;
+                                if (x === 4 && y >= 4 && y < 8) isSolid = true;
+                                if (x === 11 && y >= 4 && y < 8) isSolid = true;
+                                
+                                if (y === 4 && x >= 12 && x < 20) isSolid = true;
+                                if (y === 7 && x >= 12 && x < 20) isSolid = true;
+                                if (x === 12 && y >= 4 && y < 8) isSolid = true;
+                                if (x === 19 && y >= 4 && y < 8) isSolid = true;
+                            } else {
+                                // Wings down
+                                if (y === 8 && x >= 4 && x < 12) isSolid = true;
+                                if (y === 11 && x >= 4 && x < 12) isSolid = true;
+                                if (x === 4 && y >= 8 && y < 12) isSolid = true;
+                                if (x === 11 && y >= 8 && y < 12) isSolid = true;
+                                
+                                if (y === 8 && x >= 12 && x < 20) isSolid = true;
+                                if (y === 11 && x >= 12 && x < 20) isSolid = true;
+                                if (x === 12 && y >= 8 && y < 12) isSolid = true;
+                                if (x === 19 && y >= 8 && y < 12) isSolid = true;
+                            }
+                            
+                            mask[y][x] = isSolid;
+                        }
+                    }
+                }
+                
+                return {
+                    mask: mask,
+                    x: this.x,
+                    y: this.y,
+                    width: this.width,
+                    height: this.height
+                };
+            }
+            
+            checkPixelCollision(crabMask, obstacleMask, crab) {
+                // First do a quick bounding box check
+                if (crabMask.x + crabMask.width < obstacleMask.x || 
+                    crabMask.x > obstacleMask.x + obstacleMask.width ||
+                    crabMask.y + crabMask.height < obstacleMask.y || 
+                    crabMask.y > obstacleMask.y + obstacleMask.height) {
+                    return false;
+                }
+                
+                // Calculate overlap area
+                const overlapX1 = Math.max(crabMask.x, obstacleMask.x);
+                const overlapY1 = Math.max(crabMask.y, obstacleMask.y);
+                const overlapX2 = Math.min(crabMask.x + crabMask.width, obstacleMask.x + obstacleMask.width);
+                const overlapY2 = Math.min(crabMask.y + crabMask.height, obstacleMask.y + obstacleMask.height);
+                
+                // Check each pixel in the overlap area
+                for (let y = overlapY1; y < overlapY2; y++) {
+                    for (let x = overlapX1; x < overlapX2; x++) {
+                        // Convert world coordinates to mask coordinates
+                        const crabMaskX = x - crabMask.x;
+                        const crabMaskY = y - crabMask.y;
+                        const obstacleMaskX = x - obstacleMask.x;
+                        const obstacleMaskY = y - obstacleMask.y;
+                        
+                        // Check if both masks have solid pixels at this position
+                        if (crabMaskX >= 0 && crabMaskX < crabMask.width &&
+                            crabMaskY >= 0 && crabMaskY < crabMask.height &&
+                            obstacleMaskX >= 0 && obstacleMaskX < obstacleMask.width &&
+                            obstacleMaskY >= 0 && obstacleMaskY < obstacleMask.height) {
+                            
+                            if (crabMask.mask[crabMaskY] && crabMask.mask[crabMaskY][crabMaskX] &&
+                                obstacleMask.mask[obstacleMaskY] && obstacleMask.mask[obstacleMaskY][obstacleMaskX]) {
+                                return true; // Pixel-perfect collision detected!
+                            }
+                        }
+                    }
+                }
+                
+                return false;
             }
         }
 
