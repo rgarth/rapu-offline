@@ -4,17 +4,18 @@ A fun HTML5 side-scrolling game featuring a crab running on the beach with a day
 
 ## 🎮 Play Now
 
-### Option 1: Download and Play Locally
+<div align="center">
+  <iframe src="https://codepen.io/embed/preview/your-pen-id" width="800" height="400" frameborder="0" style="border: 2px solid #ddd; border-radius: 8px;"></iframe>
+</div>
+
+**The game is embedded above! Click inside the frame to start playing.**
+
+### Alternative: Download and Play Locally
 1. **Download** the `index.html` file from this repository
 2. **Open** it in any modern web browser
 3. **Start playing** immediately!
 
-### Option 2: Use GitHub's Raw File
-1. Click the **"Raw"** button on the `index.html` file
-2. **Save** the page as `index.html` on your computer
-3. **Open** the saved file in your browser
-
-### Option 3: Quick Start
+### Quick Start
 ```bash
 # Clone the repository
 git clone https://github.com/rgarth/rapu-offline.git
