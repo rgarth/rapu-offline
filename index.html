@@ -627,12 +627,12 @@
             if (!gameRunning) {
                 // Draw opaque background for game over text
                 ctx.fillStyle = 'rgba(247, 247, 247, 0.9)'; // Semi-transparent white
-                ctx.fillRect(canvas.width/2 - 80, canvas.height/2 - 25, 160, 50);
+                ctx.fillRect(canvas.width/2 - 100, canvas.height/2 - 35, 200, 70);
                 
                 // Draw border around the background
                 ctx.strokeStyle = '#535353';
                 ctx.lineWidth = 2;
-                ctx.strokeRect(canvas.width/2 - 80, canvas.height/2 - 25, 160, 50);
+                ctx.strokeRect(canvas.width/2 - 100, canvas.height/2 - 35, 200, 70);
                 
                 // Draw game over text
                 ctx.fillStyle = '#535353';
