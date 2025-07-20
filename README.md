@@ -5,8 +5,12 @@ A fun HTML5 side-scrolling game featuring a crab running on the beach with a day
 ## 🎮 Play Now
 
 <div align="center">
-  <iframe src="https://rgarth.github.io/rapu-offline/" width="800" height="400" frameborder="0" style="border: 2px solid #ddd; border-radius: 8px;"></iframe>
+  <a href="./index.html" target="_blank">
+    <img src="https://img.shields.io/badge/Play-Game-brightgreen?style=for-the-badge&logo=game-controller" alt="Play Game" />
+  </a>
 </div>
+
+**Click the button above to play the game directly in your browser!**
 
 ## 🎯 How to Play
 
@@ -25,7 +29,11 @@ A fun HTML5 side-scrolling game featuring a crab running on the beach with a day
 
 ## 🚀 Live Demo
 
-[Play the full game here](https://rgarth.github.io/rapu-offline/)
+The game is playable directly from this repository! Click the "Play Game" button above or download the `index.html` file and open it in your browser.
+
+**Alternative URLs** (if GitHub Pages is configured):
+- [GitHub Pages](https://rgarth.github.io/rapu-offline/)
+- [Raw HTML](https://raw.githubusercontent.com/rgarth/rapu-offline/master/index.html)
 
 ## 🛠️ Built With
 
