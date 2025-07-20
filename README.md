@@ -4,13 +4,27 @@ A fun HTML5 side-scrolling game featuring a crab running on the beach with a day
 
 ## 🎮 Play Now
 
-<div align="center">
-  <a href="./index.html" target="_blank">
-    <img src="https://img.shields.io/badge/Play-Game-brightgreen?style=for-the-badge&logo=game-controller" alt="Play Game" />
-  </a>
-</div>
+### Option 1: Download and Play Locally
+1. **Download** the `index.html` file from this repository
+2. **Open** it in any modern web browser
+3. **Start playing** immediately!
 
-**Click the button above to play the game directly in your browser!**
+### Option 2: Use GitHub's Raw File
+1. Click the **"Raw"** button on the `index.html` file
+2. **Save** the page as `index.html` on your computer
+3. **Open** the saved file in your browser
+
+### Option 3: Quick Start
+```bash
+# Clone the repository
+git clone https://github.com/rgarth/rapu-offline.git
+cd rapu-offline
+
+# Open in browser (macOS)
+open index.html
+
+# Or just double-click the index.html file
+```
 
 ## 🎯 How to Play
 
@@ -29,11 +43,13 @@ A fun HTML5 side-scrolling game featuring a crab running on the beach with a day
 
 ## 🚀 Live Demo
 
-The game is playable directly from this repository! Click the "Play Game" button above or download the `index.html` file and open it in your browser.
+The game is a single HTML file that runs entirely in your browser - no server required!
 
-**Alternative URLs** (if GitHub Pages is configured):
-- [GitHub Pages](https://rgarth.github.io/rapu-offline/)
-- [Raw HTML](https://raw.githubusercontent.com/rgarth/rapu-offline/master/index.html)
+**Quick Links:**
+- [Download index.html](https://raw.githubusercontent.com/rgarth/rapu-offline/master/index.html) (Right-click → Save As)
+- [View Source](https://github.com/rgarth/rapu-offline/blob/master/index.html)
+
+**Note:** Due to custom domain settings, GitHub Pages may not be available for this repository.
 
 ## 🛠️ Built With
 
