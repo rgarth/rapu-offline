@@ -467,22 +467,22 @@
                 const moonX = canvas.width - (nightProgress * canvas.width * 1.2) + 30;
                 const moonY = 40 - Math.sin(nightProgress * Math.PI) * 30; // Same arc as sun
                 
-                // Simple triangle moon - no glow, just the triangle
+                // Simple triangle moon - no glow, just the triangle (enlarged by 15%)
                 ctx.fillStyle = '#ffffff'; // Bright white
                 
-                // Triangle shape pointing right (like |>)
-                ctx.fillRect(moonX + 4, moonY + 8, 8, 2);
-                ctx.fillRect(moonX + 6, moonY + 10, 6, 2);
-                ctx.fillRect(moonX + 8, moonY + 12, 4, 2);
-                ctx.fillRect(moonX + 10, moonY + 14, 2, 2);
-                ctx.fillRect(moonX + 6, moonY + 16, 6, 2);
-                ctx.fillRect(moonX + 4, moonY + 18, 8, 2);
+                // Triangle shape pointing right (like |>) - scaled up by 15%
+                ctx.fillRect(moonX + 3, moonY + 7, 9, 2);
+                ctx.fillRect(moonX + 5, moonY + 9, 7, 2);
+                ctx.fillRect(moonX + 7, moonY + 11, 5, 2);
+                ctx.fillRect(moonX + 9, moonY + 13, 3, 2);
+                ctx.fillRect(moonX + 5, moonY + 15, 7, 2);
+                ctx.fillRect(moonX + 3, moonY + 17, 9, 2);
                 
-                // Moon craters for detail and visibility
+                // Moon craters for detail and visibility - scaled up by 15%
                 ctx.fillStyle = '#e0e0e0';
-                ctx.fillRect(moonX + 8, moonY + 8, 3, 3);
-                ctx.fillRect(moonX + 16, moonY + 12, 2, 2);
-                ctx.fillRect(moonX + 12, moonY + 18, 2, 2);
+                ctx.fillRect(moonX + 7, moonY + 7, 3, 3);
+                ctx.fillRect(moonX + 15, moonY + 11, 2, 2);
+                ctx.fillRect(moonX + 11, moonY + 17, 2, 2);
             }
         }
 
@@ -625,6 +625,16 @@
             drawMoon();
             
             if (!gameRunning) {
+                // Draw opaque background for game over text
+                ctx.fillStyle = 'rgba(247, 247, 247, 0.9)'; // Semi-transparent white
+                ctx.fillRect(canvas.width/2 - 80, canvas.height/2 - 25, 160, 50);
+                
+                // Draw border around the background
+                ctx.strokeStyle = '#535353';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(canvas.width/2 - 80, canvas.height/2 - 25, 160, 50);
+                
+                // Draw game over text
                 ctx.fillStyle = '#535353';
                 ctx.font = '16px monospace';
                 ctx.textAlign = 'center';
