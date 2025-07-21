@@ -603,17 +603,32 @@
             ctx.fillRect(152 - (score % 300), ground + 4, 1, 2);
         }
 
+        // Cloud system - much slower than sun for proper parallax
+        let clouds = [
+            { x: 100, y: 20, width: 24, height: 8, speed: 0.05 },
+            { x: 300, y: 30, width: 32, height: 8, speed: 0.03 },
+            { x: 500, y: 15, width: 20, height: 8, speed: 0.07 },
+            { x: 150, y: 25, width: 16, height: 6, speed: 0.04 },
+            { x: 400, y: 18, width: 28, height: 10, speed: 0.06 }
+        ];
+
+        function updateClouds() {
+            clouds.forEach(cloud => {
+                cloud.x -= cloud.speed;
+                // Reset cloud position when it goes off screen
+                if (cloud.x + cloud.width < -50) {
+                    cloud.x = canvas.width + 50;
+                    // Randomize Y position slightly for variety
+                    cloud.y = 15 + Math.random() * 20;
+                }
+            });
+        }
+
         function drawClouds() {
             ctx.fillStyle = '#d0d0d0';
-            // Static clouds for background
-            const cloudOffset = gameRunning ? (score % 200) : 0;
-            ctx.fillRect(100 - cloudOffset, 20, 24, 8);
-            ctx.fillRect(300 - (score % 300), 30, 32, 8);
-            ctx.fillRect(500 - (score % 250), 15, 20, 8);
-            
-            // More clouds
-            ctx.fillRect(150 - (score % 180), 25, 16, 6);
-            ctx.fillRect(400 - (score % 220), 18, 28, 10);
+            clouds.forEach(cloud => {
+                ctx.fillRect(cloud.x, cloud.y, cloud.width, cloud.height);
+            });
         }
 
         function drawSun() {
@@ -727,6 +742,8 @@
             ctx.fillStyle = '#f7f7f7';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
+            // Update clouds (they should move even when game is paused/over)
+            updateClouds();
             drawClouds();
             drawSun();
             drawGround();
@@ -741,7 +758,7 @@
             if (cycleProgress > 0.5) {
                 // Night phase - pixelated gradient in top 25% only
                 const nightProgress = (cycleProgress - 0.5) * 2; // 0 to 1 during night
-                const intensity = Math.min(nightProgress * 0.4, 0.4); // Max 40% coverage
+                const intensity = Math.min(nightProgress * 0.8, 0.8); // Max 80% coverage for darker night
                 
                 // Create pixelated dithering pattern only in top portion
                 for (let y = 0; y < ditherHeight; y++) {
@@ -750,16 +767,13 @@
                     
                     if (coverage > 0) {
                         ctx.fillStyle = '#535353';
-                        // Dithering pattern - deterministic checkerboard
-                        for (let x = 0; x < canvas.width; x += 4) {
-                            for (let y2 = y; y2 < y + 4; y2 += 4) {
-                                // Use deterministic pattern based on position
+                        // Dithering pattern - more random for darker appearance
+                        for (let x = 0; x < canvas.width; x += 2) {
+                            for (let y2 = y; y2 < y + 4; y2 += 2) {
+                                // Use diagonal pattern without horizontal movement
                                 const patternValue = ((x + y2) % 8) / 8;
                                 if (patternValue < coverage) {
                                     ctx.fillRect(x, y2, 2, 2);
-                                }
-                                if ((patternValue + 0.5) % 1 < coverage) {
-                                    ctx.fillRect(x + 2, y2 + 2, 2, 2);
                                 }
                             }
                         }
@@ -777,14 +791,11 @@
                         const coverage = intensity * (1 - gradientProgress * 0.8);
                         
                         if (coverage > 0) {
-                            for (let x = 0; x < canvas.width; x += 4) {
-                                for (let y2 = y; y2 < y + 4; y2 += 4) {
+                            for (let x = 0; x < canvas.width; x += 2) {
+                                for (let y2 = y; y2 < y + 4; y2 += 2) {
                                     const patternValue = ((x + y2) % 8) / 8;
                                     if (patternValue < coverage) {
                                         ctx.fillRect(x, y2, 2, 2);
-                                    }
-                                    if ((patternValue + 0.5) % 1 < coverage) {
-                                        ctx.fillRect(x + 2, y2 + 2, 2, 2);
                                     }
                                 }
                             }
@@ -803,14 +814,11 @@
                         const coverage = intensity * (1 - gradientProgress * 0.8);
                         
                         if (coverage > 0) {
-                            for (let x = 0; x < canvas.width; x += 4) {
-                                for (let y2 = y; y2 < y + 4; y2 += 4) {
+                            for (let x = 0; x < canvas.width; x += 2) {
+                                for (let y2 = y; y2 < y + 4; y2 += 2) {
                                     const patternValue = ((x + y2) % 8) / 8;
                                     if (patternValue < coverage) {
                                         ctx.fillRect(x, y2, 2, 2);
-                                    }
-                                    if ((patternValue + 0.5) % 1 < coverage) {
-                                        ctx.fillRect(x + 2, y2 + 2, 2, 2);
                                     }
                                 }
                             }
